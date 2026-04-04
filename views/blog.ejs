@@ -24,15 +24,41 @@
             </div>
             <% } %>
             <h1 class="article-title"><%= blog.title %></h1>
+            <% if (blog.tags && blog.tags.length) { %>
+            <div class="article-tags mb-3">
+                <% blog.tags.forEach((t) => { %>
+                    <span class="tag-pill"><%= t %></span>
+                <% }) %>
+            </div>
+            <% } %>
+            <% if (blog.createdAt) { %>
+            <p class="article-published text-muted small mb-3">
+                Published <%= new Date(blog.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) %>
+            </p>
+            <% } %>
+            <div class="article-engagement mb-4">
+                <% if (locals.user) { %>
+                    <form action="/blog/<%= blog._id %>/like" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-engage <%= locals.likedByMe ? 'btn-engage--active' : 'btn-outline-secondary' %> rounded-pill">
+                            ♥ Like · <%= typeof likeCount !== 'undefined' ? likeCount : ((blog.likedBy && blog.likedBy.length) || 0) %>
+                        </button>
+                    </form>
+                <% } else { %>
+                    <span class="text-muted small">♥ <%= typeof likeCount !== 'undefined' ? likeCount : ((blog.likedBy && blog.likedBy.length) || 0) %> likes · </span>
+                    <a href="/user/signin" class="small">Sign in</a><span class="text-muted small"> to like</span>
+                <% } %>
+            </div>
             <div class="article-body"><%= blog.body %></div>
         </article>
 
         <div class="author-card">
+            <a href="<%= blog.createdBy && blog.createdBy._id ? '/user/profile/' + blog.createdBy._id : '#' %>" class="author-card__link d-flex align-items-center gap-3 text-decoration-none text-reset">
             <img src="<%= blog.createdBy && blog.createdBy.profilePicture ? blog.createdBy.profilePicture : '/images/download.jpg' %>" alt="" onerror="this.src='/images/download.jpg'">
             <div>
-                <p class="author-name"><%= blog.createdBy && blog.createdBy.fullName ? blog.createdBy.fullName : 'Author' %></p>
-                <p class="author-label">Author</p>
+                <p class="author-name mb-0"><%= blog.createdBy && blog.createdBy.fullName ? blog.createdBy.fullName : 'Author' %></p>
+                <p class="author-label">Author · View profile</p>
             </div>
+            </a>
         </div>
 
         <section class="comments-section" aria-labelledby="comments-heading">

@@ -3,6 +3,16 @@ const path = require('path');
 const Blog = require('../models/blog');
 const Comment = require('../models/comment');
 
+function parseTags(raw) {
+  if (!raw || typeof raw !== 'string') return [];
+  return raw
+    .split(/[,#]/)
+    .map((t) => t.trim().toLowerCase())
+    .filter(Boolean)
+    .map((t) => t.replace(/\s+/g, '-'))
+    .slice(0, 24);
+}
+
 const PUBLIC = path.join(__dirname, '..', 'public');
 
 function canManageBlog(user, blog) {
@@ -21,11 +31,16 @@ function getAddNewPage(req, res) {
 
 async function createBlog(req, res) {
   const { title, body } = req.body;
+  const tags = parseTags(req.body.tags);
+  const coverImageURL = req.file
+    ? `/uploads/${req.file.filename}`
+    : '/images/download.jpg';
   const blog = await Blog.create({
     body,
     title,
+    tags,
     createdBy: req.user._id,
-    coverImageURL: `/uploads/${req.file.filename}`,
+    coverImageURL,
   });
   return res.redirect(`/blog/${blog._id}`);
 }
@@ -64,6 +79,7 @@ async function updateBlog(req, res) {
   const { title, body } = req.body;
   if (title) blog.title = title.trim();
   if (body !== undefined) blog.body = body;
+  if (req.body.tags !== undefined) blog.tags = parseTags(req.body.tags);
 
   if (req.file) {
     if (blog.coverImageURL && blog.coverImageURL.startsWith('/uploads/')) {
@@ -108,6 +124,7 @@ async function deleteBlog(req, res) {
 }
 
 async function addComment(req, res) {
+  if (!req.user) return res.redirect('/user/signin');
   await Comment.create({
     content: req.body.content,
     blogId: req.params.blogId,
@@ -128,13 +145,38 @@ async function getBlogById(req, res) {
   }
   const comments = await Comment.find({ blogId: req.params.id }).populate('createdBy');
   const canManage = canManageBlog(req.user, blog);
+  const likes = blog.likedBy || [];
+  const likeCount = likes.length;
+  const likedByMe =
+    req.user && likes.some((id) => String(id) === String(req.user._id));
   return res.render('blog', {
     user: req.user,
     blog,
     comments,
     canDelete: canManage,
     canEdit: canManage,
+    likeCount,
+    likedByMe,
   });
+}
+
+async function toggleLike(req, res) {
+  if (!req.user) return res.redirect('/user/signin');
+  let blog;
+  try {
+    blog = await Blog.findById(req.params.id);
+  } catch {
+    return res.status(404).render('not-found', { user: req.user, path: req.path });
+  }
+  if (!blog) return res.status(404).render('not-found', { user: req.user, path: req.path });
+  const uid = String(req.user._id);
+  const list = Array.isArray(blog.likedBy) ? [...blog.likedBy] : [];
+  const idx = list.findIndex((id) => String(id) === uid);
+  if (idx >= 0) list.splice(idx, 1);
+  else list.push(req.user._id);
+  blog.likedBy = list;
+  await blog.save();
+  return res.redirect(`/blog/${blog._id}`);
 }
 
 module.exports = {
@@ -145,4 +187,5 @@ module.exports = {
   deleteBlog,
   addComment,
   getBlogById,
+  toggleLike,
 };

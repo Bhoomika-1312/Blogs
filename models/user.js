@@ -23,6 +23,10 @@ const userSchema = new Schema({
         type : String,
         default : "/images/download.png",
     },
+    bio : {
+        type : String,
+        default : "",
+    },
     role : {
         type : String,
         enum : ["ADMIN","USER"],
@@ -47,7 +51,9 @@ userSchema.statics.matchpasswordandgeneratetoken = async function (email,passwor
 
 userSchema.pre('save', function(next) {
     const user = this;
-    if(!user.isModified("password")) return;
+    if (!user.isModified("password")) {
+        return next();
+    }
     const salt = randomBytes(16).toString();
     const hashedPass = createHmac('sha256' , salt)
     .update(user.password)

@@ -7,7 +7,7 @@
 <body class="d-flex flex-column min-vh-100">
     <%- include("./partials/nav") %>
     <main class="container form-page flex-grow-1 px-3 px-lg-4">
-        <div class="profile-card">
+        <div class="profile-card animate-in">
             <div class="profile-card__header d-flex flex-column flex-sm-row align-items-sm-center gap-3">
                 <img class="profile-card__avatar" src="<%= profileUser.profilePicture || '/images/download.jpg' %>" alt="" onerror="this.src='/images/download.jpg'">
                 <div>
@@ -15,7 +15,7 @@
                     <p class="text-muted mb-0"><%= profileUser.email %></p>
                 </div>
             </div>
-            <dl class="profile-details row g-3 mt-3 mb-0">
+            <dl class="profile-details row g-3 mt-3 mb-4">
                 <div class="col-sm-6">
                     <dt>Role</dt>
                     <dd><%= profileUser.role || 'USER' %></dd>
@@ -24,7 +24,22 @@
                     <dt>Member since</dt>
                     <dd><%= profileUser.createdAt ? new Date(profileUser.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) : '—' %></dd>
                 </div>
+                <div class="col-sm-6">
+                    <dt>Posts published</dt>
+                    <dd><%= typeof blogCount !== 'undefined' ? blogCount : 0 %></dd>
+                </div>
+                <div class="col-12">
+                    <dt>Public profile</dt>
+                    <dd><a href="/user/profile/<%= profileUser._id %>">View as others see it</a></dd>
+                </div>
             </dl>
+
+            <h2 class="h5 mb-3">About you</h2>
+            <form action="/user/profile" method="post" class="profile-edit-form">
+                <label for="bio" class="form-label">Bio</label>
+                <textarea class="form-control mb-3" name="bio" id="bio" rows="4" placeholder="A short intro visible on your public profile…"><%= profileUser.bio || '' %></textarea>
+                <button type="submit" class="btn btn-primary rounded-pill">Save bio</button>
+            </form>
         </div>
     </main>
     <%- include("./partials/footer") %>

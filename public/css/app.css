@@ -490,6 +490,241 @@ body > .container:first-of-type {
   border-color: var(--color-accent-hover);
 }
 
+/* Page entrance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp 0.55s ease-out both;
+}
+
+.hero--compact {
+  padding-bottom: 1rem;
+}
+
+.hero--compact h1 {
+  margin-bottom: 0.35rem;
+}
+
+/* Tags */
+.tag-pill {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.12);
+  color: var(--color-accent);
+  margin-right: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.tag-pill--sm {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+}
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Engagement */
+.btn-engage {
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.4rem 1rem;
+  border-width: 1px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s;
+}
+
+.btn-engage:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-engage--active {
+  background: rgba(15, 118, 110, 0.18) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-ink) !important;
+}
+
+.post-card__date {
+  font-size: 0.8rem;
+}
+
+/* Author link */
+.author-card__link {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  padding: 0.25rem;
+  margin: -0.25rem;
+  transition: background 0.2s ease;
+}
+
+.author-card__link:hover {
+  background: rgba(15, 118, 110, 0.06);
+}
+
+/* Dashboard */
+.dashboard-section {
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-section__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-table-wrap {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard-table {
+  margin: 0;
+  --bs-table-bg: transparent;
+}
+
+.dashboard-table thead {
+  background: rgba(15, 118, 110, 0.08);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+}
+
+.dashboard-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.dashboard-table tbody tr:hover {
+  background: rgba(15, 118, 110, 0.04);
+}
+
+/* Public profile */
+.profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  padding: 2rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+@media (min-width: 576px) {
+  .profile-hero {
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
+.profile-hero__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.profile-hero__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.profile-hero__role {
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  margin-bottom: 0;
+}
+
+.profile-hero__bio {
+  margin-top: 0.75rem;
+  line-height: 1.6;
+  color: #2d2a35;
+  margin-bottom: 0;
+}
+
+.profile-post-list__item {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 0.65rem;
+  background: var(--color-bg-elevated);
+  animation: fadeInUp 0.45s ease-out both;
+}
+
+.profile-post-list__link {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+
+.profile-post-list__link:hover {
+  color: var(--color-accent);
+}
+
+.profile-post-list__date {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  margin-top: 0.35rem;
+}
+
+.profile-edit-form .form-control {
+  border-radius: var(--radius);
+}
+
+/* Stagger post cards on home */
+.row-cols-1 .post-card {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.row .col:nth-child(1) .post-card {
+  animation-delay: 0.02s;
+}
+.row .col:nth-child(2) .post-card {
+  animation-delay: 0.08s;
+}
+.row .col:nth-child(3) .post-card {
+  animation-delay: 0.14s;
+}
+.row .col:nth-child(4) .post-card {
+  animation-delay: 0.2s;
+}
+.row .col:nth-child(5) .post-card {
+  animation-delay: 0.26s;
+}
+.row .col:nth-child(6) .post-card {
+  animation-delay: 0.32s;
+}
+
 /* 404 */
 .not-found__code {
   font-family: var(--font-display, Georgia, serif);

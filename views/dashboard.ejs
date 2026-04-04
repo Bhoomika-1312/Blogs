@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("./partials/head") %>
+    <title>Your dashboard — Blogify</title>
+</head>
+<body class="d-flex flex-column min-vh-100 page-dashboard">
+    <% const activeNav = 'dashboard'; %>
+    <%- include("./partials/nav") %>
+    <main class="container flex-grow-1 px-3 px-lg-4 pb-5">
+        <header class="hero hero--compact animate-in">
+            <h1>Dashboard</h1>
+            <p>Your posts timeline — which article went live when.</p>
+        </header>
+
+        <section class="dashboard-section animate-in" style="animation-delay: 0.05s">
+            <h2 class="dashboard-section__title">My posts</h2>
+            <% if (!myBlogs || myBlogs.length === 0) { %>
+                <p class="text-muted mb-0">You have not published yet. <a href="/blog/add-new">Write your first post</a>.</p>
+            <% } else { %>
+                <div class="table-responsive dashboard-table-wrap">
+                    <table class="table dashboard-table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Published</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Tags</th>
+                                <th scope="col" class="text-end">Likes</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% myBlogs.forEach((b) => { %>
+                                <tr>
+                                    <td class="text-nowrap text-muted small">
+                                        <% if (b.createdAt) { %>
+                                            <%= new Date(b.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) %>
+                                        <% } else { %>—<% } %>
+                                    </td>
+                                    <td><strong><%= b.title %></strong></td>
+                                    <td>
+                                        <% if (b.tags && b.tags.length) { %>
+                                            <% b.tags.slice(0, 3).forEach((t) => { %>
+                                                <span class="tag-pill tag-pill--sm"><%= t %></span>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <span class="text-muted">—</span>
+                                        <% } %>
+                                    </td>
+                                    <td class="text-end"><%= (b.likedBy && b.likedBy.length) || 0 %></td>
+                                    <td class="text-end text-nowrap">
+                                        <a href="/blog/<%= b._id %>" class="btn btn-sm btn-outline-primary rounded-pill">View</a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </section>
+    </main>
+    <%- include("./partials/footer") %>
+    <%- include("./partials/scripts") %>
+</body>
+</html>

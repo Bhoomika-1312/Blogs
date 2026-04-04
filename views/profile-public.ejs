@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("./partials/head") %>
+    <title><%= profileUser.fullName %> — Blogify</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <%- include("./partials/nav") %>
+    <main class="container flex-grow-1 px-3 px-lg-4 pb-5">
+        <div class="profile-hero animate-in">
+            <img class="profile-hero__avatar" src="<%= profileUser.profilePicture || '/images/download.jpg' %>" alt="" onerror="this.src='/images/download.jpg'">
+            <div class="profile-hero__body">
+                <h1 class="profile-hero__name"><%= profileUser.fullName %></h1>
+                <% if (isOwnProfile) { %>
+                    <p class="text-muted mb-2"><%= profileUser.email %></p>
+                <% } %>
+                <p class="profile-hero__role"><%= profileUser.role || 'USER' %> · Joined <%= profileUser.createdAt ? new Date(profileUser.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) : '—' %></p>
+                <% if (profileUser.bio) { %>
+                    <p class="profile-hero__bio"><%= profileUser.bio %></p>
+                <% } %>
+                <% if (isOwnProfile) { %>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <a href="/user/profile" class="btn btn-primary btn-sm rounded-pill">Edit profile</a>
+                        <a href="/user/dashboard" class="btn btn-outline-secondary btn-sm rounded-pill">Dashboard</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <section class="profile-posts mt-5 animate-in" style="animation-delay: 0.08s">
+            <h2 class="h4 mb-3">Posts by <%= profileUser.fullName %></h2>
+            <% if (!blogs || blogs.length === 0) { %>
+                <p class="text-muted">No posts yet.</p>
+            <% } else { %>
+                <ul class="profile-post-list list-unstyled">
+                    <% blogs.forEach((b) => { %>
+                        <li class="profile-post-list__item">
+                            <a href="/blog/<%= b._id %>" class="profile-post-list__link"><%= b.title %></a>
+                            <span class="profile-post-list__date">
+                                <% if (b.createdAt) { %>
+                                    <%= new Date(b.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) %>
+                                <% } %>
+                            </span>
+                            <% if (b.tags && b.tags.length) { %>
+                                <div class="mt-1">
+                                    <% b.tags.slice(0, 5).forEach((t) => { %>
+                                        <span class="tag-pill tag-pill--sm"><%= t %></span>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } %>
+        </section>
+    </main>
+    <%- include("./partials/footer") %>
+    <%- include("./partials/scripts") %>
+</body>
+</html>

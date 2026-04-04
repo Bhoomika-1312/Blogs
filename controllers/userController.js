@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Blog = require('../models/blog');
 
 function getSigninPage(req, res) {
   return res.render('signin');
@@ -16,9 +17,58 @@ async function getProfilePage(req, res) {
   if (!profileUser) {
     return res.redirect('/user/signin');
   }
+  const blogCount = await Blog.countDocuments({ createdBy: profileUser._id });
   return res.render('profile', {
     user: req.user,
     profileUser,
+    blogCount,
+  });
+}
+
+async function updateProfile(req, res) {
+  if (!req.user) return res.redirect('/user/signin');
+  const { bio } = req.body;
+  await User.findByIdAndUpdate(req.user._id, {
+    bio: typeof bio === 'string' ? bio.trim().slice(0, 2000) : '',
+  });
+  return res.redirect('/user/profile');
+}
+
+async function getDashboardPage(req, res) {
+  if (!req.user) return res.redirect('/user/signin');
+  const myBlogs = await Blog.find({ createdBy: req.user._id })
+    .sort({ createdAt: -1 })
+    .lean();
+  return res.render('dashboard', {
+    user: req.user,
+    myBlogs,
+  });
+}
+
+async function getPublicProfilePage(req, res) {
+  let profileUser;
+  try {
+    const isOwn =
+      req.user && String(req.user._id) === String(req.params.id);
+    profileUser = await User.findById(req.params.id).select(
+      isOwn ? '-password -salt' : '-password -salt -email',
+    );
+  } catch {
+    return res.status(404).render('not-found', { user: req.user, path: req.path });
+  }
+  if (!profileUser) {
+    return res.status(404).render('not-found', { user: req.user, path: req.path });
+  }
+  const blogs = await Blog.find({ createdBy: profileUser._id })
+    .sort({ createdAt: -1 })
+    .lean();
+  const isOwnProfile =
+    req.user && String(req.user._id) === String(profileUser._id);
+  return res.render('profile-public', {
+    user: req.user,
+    profileUser,
+    blogs,
+    isOwnProfile,
   });
 }
 
@@ -52,6 +102,9 @@ module.exports = {
   getSigninPage,
   getSignupPage,
   getProfilePage,
+  updateProfile,
+  getDashboardPage,
+  getPublicProfilePage,
   signin,
   signup,
   logout,

@@ -11,6 +11,9 @@
         </li>
         <% if (locals.user) { %>
           <li class="nav-item">
+            <a class="nav-link <%= typeof activeNav !== 'undefined' && activeNav === 'dashboard' ? 'active' : '' %>" href="/user/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/blog/add-new">Write</a>
           </li>
           <li class="nav-item dropdown">
